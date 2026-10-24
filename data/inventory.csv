@@ -1,0 +1,4 @@
+sku,product_name,on_hand,reorder_point,supplier_id
+TSHIRT-BLK-M,Classic Tee Black Medium,2,5,SUP-01
+HOODIE-GRN-L,Everyday Hoodie Green Large,8,3,SUP-02
+CAP-NVY,Navy Cap,1,2,SUP-01

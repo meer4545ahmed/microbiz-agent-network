@@ -1,0 +1,5 @@
+order_id,sku,quantity,status
+ORD-1001,TSHIRT-BLK-M,2,awaiting_fulfillment
+ORD-1002,TSHIRT-BLK-M,1,processing
+ORD-1003,HOODIE-GRN-L,1,awaiting_fulfillment
+ORD-1004,CAP-NVY,1,fulfilled
