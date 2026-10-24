@@ -17,4 +17,4 @@ The Coordinator uses the Agent Chat Protocol. The Analyst accepts a typed `Opera
 
 ## Safety and demo boundaries
 
-This hackathon MVP uses synthetic local CSVs only; it is not connected to a real shop. It never sends messages, edits orders or inventory, or places purchases. All communications are drafts labeled for owner approval. Do not provide real customer data or secrets in chat.
+This hackathon MVP uses synthetic local CSVs only; it is not connected to a real shop. It never sends messages, edits orders or inventory, or places purchases. All communications are drafts labeled for owner approval. Do not provide real customer data, Shopify tokens, API keys, or other secrets in chat. Live store connectors require a separate secure platform authorization flow and are not implemented in this version.

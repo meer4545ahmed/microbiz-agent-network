@@ -26,6 +26,9 @@ A beginner-friendly, two-agent demo for a small retailer. The owner asks for an 
 - [x] Verify ASI:One direct chat and real ACP delegation end-to-end: sent the review request to the Coordinator, Analyst logged receiving the typed request and returning two findings, Coordinator logged delegation and return, and ASI:One displayed the final report/drafts.
 - [x] Publish the safe public GitHub repository: <https://github.com/meer4545ahmed/microbiz-agent-network>.
 - [ ] Record the final public ASI:One shared-chat URL and demo video for submission.
+- [x] Block common pasted credentials in public chat and explain the secure-connector requirement.
+- [ ] Deploy both mailbox agents on an always-on host for 24/7 availability.
+- [ ] Add a platform-specific Shopify OAuth connection before analyzing real shop data.
 
 ## Requirements
 
@@ -102,6 +105,26 @@ Copy the printed Analyst address into `.env`. Then start the Coordinator in the 
 
 The Coordinator is the user-facing agent. Both local agents have been connected to Agentverse Mailbox through the Inspector UI. Keep both running during a demo. A direct ASI:One profile chat was verified end-to-end with a real Coordinator-to-Analyst ACP exchange and report. The Agentverse profiles may still require their setup checklist before showing as active/discoverable in search. Do not send funds or apply wallet credit to address the Almanac on-chain low-funds warning. The hackathon image's offer advertises one month of ASI:One Pro and Agentverse Premium, not $100 of wallet funds; it is unrelated to this local CSV demo.
 
+## Make the mailbox agents continuously available
+
+The agents currently run on your computer. They are reachable through Agentverse Mailbox while those processes and the computer/network remain available; closing the terminals stops service. For an always-on demo, deploy the included Docker Compose services to a trusted host with an always-running container plan and outbound HTTPS access to Agentverse. Do not use a sleep/scale-to-zero plan for a live demo.
+
+1. Install Docker Desktop (or use a Linux host with Docker Compose).
+2. Configure the host's secret manager with `ANALYST_SEED`, `COORDINATOR_SEED`, and `ANALYST_ADDRESS`. Use the existing local `.env` only for private testing; never upload or commit it. The Coordinator address and Analyst address are derived from those seeds; preserve the same seeds to keep registered addresses unchanged.
+3. From the project directory on the host, build and run `docker compose up --build -d`.
+4. Check `docker compose logs -f analyst coordinator` and confirm both manifest publication, mailbox connection, and one successful ASI:One request.
+5. Keep the two services running. Before presenting as continuously live, verify host health/restarts and repeat an ASI:One chat after disconnecting your laptop.
+
+The Compose setup is a deployment foundation, not proof of a production deployment. It still runs the fictional CSV dataset. Test host availability and mailbox connectivity before claiming 24/7 uptime.
+
+## Live Shopify data: safe integration boundary
+
+There is no universal website API key. Shopify, WooCommerce, and other platforms use different authorization, API versions, scopes, and data models. **Never paste a Shopify token or any other secret into ASI:One chat.** Chat content is not a secure credential-entry channel and could be retained or exposed in conversation history. The Coordinator now blocks common token formats and tells the user not to share credentials; detection is only a safety net and cannot identify every arbitrary secret format.
+
+The current build does not connect to Shopify or any real shop. To add real customer-specific data safely, implement a Shopify-specific OAuth authorization flow (shop owner authorizes the app in a secure browser flow; server validates state/redirect, encrypts and tenant-isolates tokens in a secrets store, and grants only the minimum read-only order/inventory scopes). Fetch data only after the authenticated shop owner starts the review. Redact personal/customer fields before agent messages; never send credentials or unnecessary personal data to the LLM. Add revocation/deletion, per-shop access controls, audit logs without secrets, rate limits, and tests for tenant isolation before public launch. Other platforms require separate connectors.
+
+Until OAuth is built and independently tested, use only the bundled synthetic CSVs and describe the live integration as planned—not implemented.
+
 ## Demo prompt
 
 > Review today's orders and inventory, identify problems, and prepare the actions I need to take.
@@ -170,6 +193,6 @@ The MVP uses local CSV fixtures, not a live shop connector. A future integration
 - **2026-10-24:** Selected MicroBiz Agent Network instead of trip planning. Limited the first build to two agents, fictional CSVs, deterministic stock analysis, and owner-approved drafts.
 - **2026-10-24:** Confirmed there is no test shop/API access available today. Live platform connectors are deferred; no generic API-key integration is claimed.
 - **2026-10-24:** Detected Python 3.14.7 and 3.15 on the machine. Installed Python 3.13, but its dependency install failed because pip could not find a compatible `grpcio` distribution. Installed Python 3.12 side-by-side instead.
-- **2026-10-24:** Added initial source/data/tests and installed dependencies in `.venv` using Python 3.12. All 3 CSV tests pass. Two unique seeds were generated directly into ignored `.env` without displaying them. Agentverse Inspector confirmed mailbox connections for both agents. Agentverse public profiles still show Inactive and require completion of their profile checklist. Added local profile descriptions/readmes. User set the Coordinator handle to `microbiz-ops`, and completed the Coordinator's Agent Guide and description. Verified direct ASI:One chat end-to-end: Coordinator delegated the typed request over ACP, Analyst read synthetic CSVs and returned two findings, and Coordinator returned the report plus approval-only drafts. Agentverse checklist was at 58% at the latest screenshot; the generated five-question test suite is present but Run Test is disabled while Inactive. Next use direct ASI:One chats to build interactions, then recheck inactive status. Public GitHub repository created and pushed: <https://github.com/meer4545ahmed/microbiz-agent-network>. General personal-AI chat may still hang, but direct Coordinator chat works. Account rate limits show OK. Added `python -m microbiz.demo` as an offline fallback. Do not purchase anything. No wallet funds or promo redemption used.
+- **2026-10-24:** Added initial source/data/tests and installed dependencies in `.venv` using Python 3.12. All tests pass. Two unique seeds are stored only in ignored local `.env`. Agentverse Inspector connected both mailbox agents; Coordinator handle is `microbiz-ops`; Coordinator README and description were completed. Direct ASI:One chat verified a real ACP delegation and synthetic-data review. Agentverse profile still shows Inactive; test runner's Run Test is disabled. Added a local offline demo fallback. Added a best-effort chat credential guard and Docker Compose deployment foundation. Live Shopify/other-shop integration is not implemented; only fictional CSV data is analyzed. Next: verify new safety tests, deploy on an always-on host, and implement secure platform-specific OAuth before connecting real shops. Public GitHub repo: <https://github.com/meer4545ahmed/microbiz-agent-network>. No purchases, wallet funds, or promo redemption used.
 
 This log records decisions and build milestones, not a verbatim copy of private conversations.

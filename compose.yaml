@@ -1,0 +1,17 @@
+services:
+  analyst:
+    build: .
+    command: ["python", "-m", "microbiz.analyst"]
+    restart: unless-stopped
+    environment:
+      ANALYST_SEED: ${ANALYST_SEED:?Set ANALYST_SEED in .env}
+
+  coordinator:
+    build: .
+    command: ["python", "-m", "microbiz.coordinator"]
+    restart: unless-stopped
+    depends_on:
+      - analyst
+    environment:
+      COORDINATOR_SEED: ${COORDINATOR_SEED:?Set COORDINATOR_SEED in .env}
+      ANALYST_ADDRESS: ${ANALYST_ADDRESS:?Set ANALYST_ADDRESS in .env}

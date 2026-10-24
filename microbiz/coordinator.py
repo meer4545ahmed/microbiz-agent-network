@@ -15,6 +15,7 @@ from uagents_core.contrib.protocols.chat import (
 )
 
 from microbiz.models import OperationsReviewRequest, OperationsReviewResult, StockFinding
+from microbiz.security import contains_credential, requests_live_store_connection
 
 load_dotenv()
 
@@ -111,6 +112,35 @@ async def handle_user_chat(ctx: Context, sender: str, msg: ChatMessage) -> None:
     )
     has_text = any(isinstance(item, TextContent) and item.text.strip() for item in msg.content)
     if not has_text:
+        return
+
+    # ASI:One chat is public conversation content, never a safe credential
+    # collection channel. Block common API-key formats and do not log or echo
+    # the submitted text. A real shop connection requires a secure OAuth flow.
+    user_text = "\n".join(
+        item.text for item in msg.content if isinstance(item, TextContent)
+    )
+    if contains_credential(user_text):
+        ctx.logger.warning("Blocked a chat message that appeared to contain a credential")
+        await ctx.send(
+            sender,
+            create_text_chat(
+                "For your security, I did not process that message because it appears to contain an API key or credential. "
+                "Do not send shop keys in ASI:One chat. Revoke that key if it was real. "
+                "Shop connections will be added through a secure, platform-specific authorization flow."
+            ),
+        )
+        return
+
+    if requests_live_store_connection(user_text):
+        await ctx.send(
+            sender,
+            create_text_chat(
+                "Live shop connections are not enabled yet. This demo currently analyzes fictional CSV data only. "
+                "Do not paste API keys or access tokens here. Shopify needs its own secure, read-only authorization flow; "
+                "there is no universal key that safely connects to every website."
+            ),
+        )
         return
 
     request_id = str(uuid4())
